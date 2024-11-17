@@ -80,7 +80,6 @@ class UserController extends Controller
             ], 401);
         }
         $proprio=Proprietaire::where('user_id', $user->id)->first();
-        dd($proprio->utilisateur->nom);
         // Si on arrive ici, l'utilisateur est validé : Créons un token
         $token = $user->createToken('NZOAPP_auth_token_ETHY_BMN')->plainTextToken;
 
