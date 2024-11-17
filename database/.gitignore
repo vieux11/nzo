@@ -1,0 +1,50 @@
+# Fichiers et répertoires liés à Laravel
+/vendor/                # Répertoire des dépendances installées par Composer
+/node_modules/          # Répertoire des dépendances Node.js (si applicable)
+.phpunit.result.cache   # Cache des tests PHPUnit
+.env                    # Fichier contenant les variables d'environnement sensibles
+.env.*                  # Autres variantes de fichiers d'environnement
+
+/storage/*.key          # Clés privées de stockage
+/storage/*.log          # Logs de stockage
+/storage/framework/cache/* # Cache Laravel
+/storage/framework/sessions/* # Sessions Laravel
+/storage/framework/views/* # Fichiers de vues compilés
+
+# Fichiers générés par Composer
+composer.lock           # Fichier de verrouillage Composer (optionnel)
+
+# Fichiers générés par Laravel Mix (si utilisé pour gérer les assets)
+npm-debug.log*          # Logs de npm
+yarn-debug.log*         # Logs de Yarn
+yarn-error.log          # Logs d'erreur de Yarn
+public/hot              # Indicateur de développement de Laravel Mix
+public/storage          # Liens symboliques pour le stockage public
+*.DS_Store              # Fichiers système macOS inutiles
+
+# Clés SSH ou autres certificats sensibles
+*.pem                   # Clés ou certificats
+
+# Systèmes d'exploitation
+.DS_Store               # Fichiers système macOS
+Thumbs.db               # Fichiers système Windows
+
+# Logs et fichiers de débogage
+*.log                   # Tous les fichiers de logs
+*.cache                 # Cache divers
+
+# IDE et éditeurs
+.idea/                  # Fichiers de configuration JetBrains (PhpStorm, WebStorm, etc.)
+.vscode/                # Fichiers de configuration VS Code
+*.swp                   # Fichiers temporaires Vim
+*.swo                   # Fichiers temporaires Vim
+*.bak                   # Fichiers de sauvegarde
+
+# Autres fichiers à ignorer
+*.lock                  # Fichiers de verrouillage divers
+*.sql                   # Sauvegardes de bases de données
+*.sqlite                # Fichiers SQLite
+*.tar                   # Archives
+
+# Tests unitaires
+coverage/               # Rapports de couverture de tests
