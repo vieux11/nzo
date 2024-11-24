@@ -28,7 +28,7 @@ class RegisterUser extends FormRequest
             'nom' => 'required|string|max:255',
             'prenom' => 'required|string|max:255',
             'tel' => 'required|string|max:15',
-            'role' => 'required|in:proprietaire,locataire',
+            //'role' => 'required|in:proprietaire,locataire',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8|confirmed',
         ];
@@ -42,7 +42,6 @@ class RegisterUser extends FormRequest
             'inputReceived' => $this->all(),
             'errorList' => $validator->errors()
         ]));
-
     }
     public function messages()
     {

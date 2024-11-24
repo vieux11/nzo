@@ -16,4 +16,17 @@ class Proprietaire extends Model
     {
         return $this->belongsTo(User::class, 'user_id');
     }
+    public function locations()
+    {
+        return $this->hasMany(Location::class, 'id_proprietaire', 'id');
+    }
+    public function proprietes()
+    {
+        return $this->hasMany(Propriete::class, 'id_proprietaire', 'id');
+    }
+    public function locataires()
+    {
+        return $this->hasMany(Locataire::class, 'id_proprietaire', 'id');
+    }
+
 }

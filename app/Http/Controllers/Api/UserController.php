@@ -34,22 +34,13 @@ class UserController extends Controller
             'nom' => $request->nom,
             'prenom' => $request->prenom,
             'tel' => $request->tel,
-            'role' => $request->role,
+            'role' => 'proprietaire',
             'email' => $request->email,
             'password' => Hash::make($request->password, ['round'=>12])
         ]);
-
-        // Création de l'enregistrement dans `proprietaire` ou `locataire` en fonction du rôle
-        if ($user->role === 'proprietaire') {
             Proprietaire::create([
                 'user_id' => $user->id, // liaison avec l'utilisateur
             ]);
-        } elseif ($user->role === 'locataire') {
-            Locataire::create([
-                'user_id' => $user->id, // liaison avec l'utilisateur
-            ]);
-        }
-
         // Retourner une réponse JSON avec les détails de l'utilisateur créé
         return response()->json([
             'message' => 'Utilisateur enregistré avec succès',
@@ -68,9 +59,7 @@ class UserController extends Controller
         // Recherche de l'utilisateur correspondant à l'identifiant
         $user = User::where('email', $credentials['identifiant'])
                     ->orWhere('tel', $credentials['identifiant'])
-                    ->orWhere('nom', $credentials['identifiant'])
                     ->first();
-
         // Vérification : Utilisateur existe + mot de passe correct ?
         if (!$user || !Hash::check($credentials['password'], $user->password)) {
             // Soit l'utilisateur n'existe pas, soit le mot de passe ne correspond pas
@@ -79,7 +68,6 @@ class UserController extends Controller
                 'message' => 'Identifiant ou mot de passe incorrect.',
             ], 401);
         }
-        $proprio=Proprietaire::where('user_id', $user->id)->first();
         // Si on arrive ici, l'utilisateur est validé : Créons un token
         $token = $user->createToken('NZOAPP_auth_token_ETHY_BMN')->plainTextToken;
 
@@ -99,15 +87,14 @@ class UserController extends Controller
         ], 200);
     }
     public function logout(Request $request)
-{
-    // Révoquer le token en cours
-    $request->user()->currentAccessToken()->delete();
+    {
+        // Révoquer le token en cours
+        $request->user()->currentAccessToken()->delete();
 
-    return response()->json([
-        'message' => 'Déconnecté avec succès.',
-    ]);
-}
-
+        return response()->json([
+            'message' => 'Déconnecté avec succès.',
+        ]);
+    }
 
     public function show(User $user)
     {
