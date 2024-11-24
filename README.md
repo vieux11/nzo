@@ -121,3 +121,5 @@ Succès (200 OK) :
   "success": true,
   "message": "Déconnecté avec succès."
 }
+documentation_api:domain./docs/api
+example:http://127.0.0.1:8000/docs/api/
