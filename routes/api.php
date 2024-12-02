@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\LocataireController;
 use App\Http\Controllers\Api\LocationController;
+use App\Http\Controllers\Api\PlainteController;
 use App\Http\Controllers\Api\ProprieteController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Middleware\RoleMiddleware;
@@ -33,6 +34,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::get('/user/validatecontract', function(){
             return 'contrat validé';
         });
+        Route::post('user/createPlainte', [PlainteController::class, 'store']);
         // Ajoutez ici d'autres routes spécifiques aux locataires
     });
 });

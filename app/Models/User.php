@@ -54,11 +54,11 @@ class User extends Authenticatable
     }
     public function proprietaire()
     {
-        return $this->hasOne(Proprietaire::class, 'user_id');
+        return $this->hasOne(Proprietaire::class, 'user_id', 'id');
     }
 
     public function locataire()
     {
-        return $this->hasOne(Locataire::class, 'user_id');
+        return $this->hasOne(Locataire::class, 'user_id', 'id');
     }
 }
