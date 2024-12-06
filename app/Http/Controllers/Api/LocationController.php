@@ -17,7 +17,54 @@ class LocationController extends Controller
      */
     public function index()
     {
-        //
+        try {
+            $userProprio = Auth::user();
+            if (!$userProprio || $userProprio->role !== 'proprietaire') {
+                return response()->json([
+                    'message' => 'Accès refusé. Seuls les propriétaires peuvent voir leurs locations.',
+                ], 403);
+            }
+            
+            // Récupérer les locations avec les relations locataire et propriété
+            $locations = Location::where('id_proprietaire', $userProprio->proprietaire->id)->with(['locataire.utilisateur', 'propriete'])
+                ->paginate(5);
+    
+            // Reformater les données pour inclure uniquement les champs nécessaires
+            $formattedLocations = [];
+            foreach ($locations->items() as $location) {
+                $formattedLocations[] = [
+                    'id' => $location->id,
+                    'date' => $location->date,
+                    'description_propriete' => $location->propriete->description ?? 'N/A',
+                    'nom_locataire' => $location->locataire->utilisateur->nom ?? 'N/A',
+                    'loyer_montant' => $location->loyer_montant,
+                    'devise' => $location->devise,
+                    'confirm' => $location->confirm,
+                    'created_at' => $location->created_at->format('d-m-Y'),
+                ];
+            }
+    
+            // Retourner une réponse JSON formatée avec la pagination
+            return response()->json([
+                'message' => 'Liste des locations récupérée avec succès.',
+                'locations' => [
+                    'data' => $formattedLocations,
+                    'pagination' => [
+                        'current_page' => $locations->currentPage(),
+                        'last_page' => $locations->lastPage(),
+                        'per_page' => $locations->perPage(),
+                        'total' => $locations->total(),
+                    ],
+                ],
+            ], 200);
+    
+        } catch (\Exception $e) {
+            // Gestion des erreurs
+            return response()->json([
+                'message' => 'Une erreur est survenue lors de la récupération des locations.',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
     }
 
     /**
