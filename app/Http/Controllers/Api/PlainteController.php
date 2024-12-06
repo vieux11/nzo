@@ -44,4 +44,27 @@ class PlainteController extends Controller
             ], 500);
         }
     }
+    public function updateStatus(Request $request, $id){
+        $user = Auth::user();
+
+        if ($user->role !== 'locataire') {
+            return response()->json(['message' => 'Accès refusé.'], 403);
+        }
+
+        $plainte = Plainte::findOrFail($id);
+
+        if ($plainte->id_locataire !== $user->locataire->id) {
+            return response()->json(['message' => 'Cette plainte ne vous appartient pas.'], 403);
+        }
+
+        $validated = $request->validate(['status' => 'required|in:résolue,fermée'],
+        [
+            'status.required' => 'Le statut est requis.',
+            'status.in' => 'Le statut doit être soit "résolue" soit "fermée".',
+        ]);
+        // Mise à jour du statut du paiement
+        $plainte->status = $validated['status'];
+        $plainte->save();
+        return response()->json(['message' => 'Statut mis à jour avec succès.'], 200);
+    }
 }
