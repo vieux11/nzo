@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\LocataireController;
 use App\Http\Controllers\Api\LocationController;
+use App\Http\Controllers\Api\payementController;
 use App\Http\Controllers\Api\PlainteController;
 use App\Http\Controllers\Api\ProprieteController;
 use App\Http\Controllers\Api\UserController;
@@ -26,6 +27,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::post('user/createLocataire', [LocataireController::class, 'create']);
         Route::post('user/createPropriete', [ProprieteController::class, 'create']);
         Route::post('user/createLocation', [LocationController::class, 'create']);
+        Route::patch('user/payements/{paiement_id}/status', [PayementController::class, 'updateStatus']);
+        Route::get('user/locations', [LocationController::class, 'index']);
 
         // Ajoutez ici d'autres routes spécifiques aux propriétaires
     });
@@ -35,6 +38,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
             return 'contrat validé';
         });
         Route::post('user/createPlainte', [PlainteController::class, 'store']);
+        Route::patch('user/plaintes/{plainte_id}/status', [PlainteController::class, 'updateStatus']);
+        Route::post('user/payement', [payementController::class, 'payement']);
         // Ajoutez ici d'autres routes spécifiques aux locataires
     });
 });
