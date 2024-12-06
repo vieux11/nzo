@@ -39,7 +39,7 @@ class StoreLocationRequest extends FormRequest
             'message' =>'erreur de validation',
             'inputReceived' => $this->all(),
             'errorList' => $validator->errors()
-        ]));
+        ], 422));
     }
     public function messages()
     {

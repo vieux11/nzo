@@ -37,7 +37,7 @@ class LogUserRequest extends FormRequest
             'message' => 'Erreur de validation',
             'inputReceived' => $this->all(),
             'errorList' => $validator->errors()
-        ]));
+        ], 422));
     }
 
     /**
