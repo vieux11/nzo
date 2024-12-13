@@ -248,14 +248,45 @@ class LocationController extends Controller
         }
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Location $location)
+    public function validatelocation($id)
     {
-        //
-        
+        try {
+            $location = Location::findOrFail($id);
+            // Vérifier que l'utilisateur est connecté
+            $user = Auth::user();
+            if (!$user || $user->role !== 'locataire') {
+                return response()->json([
+                    'message' => 'Accès refusé : seuls les locataires peuvent valider une location.',
+                ], 403);
+            }
+
+            // Vérifier que l'utilisateur est le propriétaire de la location
+            if ($location->id_locataire !== optional($user->locataire)->id) {
+                return response()->json([
+                    'message' => 'Accès refusé : cette location ne vous appartient pas.',
+                ], 403);
+            }
+
+            // Mettre à jour la propriété confirm
+            $location->confirm = true;
+            $location->save();
+
+            return response()->json([
+                'message' => 'La location a été validée avec succès.',
+                'location' => [
+                    'id' => $location->id,
+                    'confirm' => $location->confirm,
+                ],
+            ], 200);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Une erreur est survenue lors de la validation de la location.',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
     }
+
 
     /**
      * Update the specified resource in storage.

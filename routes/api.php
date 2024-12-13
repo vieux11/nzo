@@ -42,6 +42,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::patch('user/plaintes/{plainte_id}/status', [PlainteController::class, 'updateStatus']);
         Route::post('user/payement', [payementController::class, 'payement']);
         Route::get('user/location', [LocationController::class, 'showlocation']);
+        Route::patch('user/locations/{location_id}/validate', [LocationController::class, 'validatelocation']);
         // Ajoutez ici d'autres routes spécifiques aux locataires
     });
 });
