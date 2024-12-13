@@ -29,6 +29,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::post('user/createLocation', [LocationController::class, 'create']);
         Route::patch('user/payements/{paiement_id}/status', [PayementController::class, 'updateStatus']);
         Route::get('user/locations', [LocationController::class, 'index']);
+        Route::get('user/locations/{location_id}', [LocationController::class, 'show']);
 
         // Ajoutez ici d'autres routes spécifiques aux propriétaires
     });
@@ -40,6 +41,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::post('user/createPlainte', [PlainteController::class, 'store']);
         Route::patch('user/plaintes/{plainte_id}/status', [PlainteController::class, 'updateStatus']);
         Route::post('user/payement', [payementController::class, 'payement']);
+        Route::get('user/location', [LocationController::class, 'showlocation']);
         // Ajoutez ici d'autres routes spécifiques aux locataires
     });
 });
