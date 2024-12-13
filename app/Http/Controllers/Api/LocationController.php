@@ -122,17 +122,130 @@ class LocationController extends Controller
     /**
      * Crée une nouvelle location.
      */
-    public function store(Request $request)
+    public function showlocation()
     {
         //
+        try {
+            // Vérifier que l'utilisateur est connecté
+            $user = Auth::user();
+            if (!$user) {
+                return response()->json([
+                    'message' => 'Veuillez vous connecter !',
+                ], 403);
+            }
+        
+            // Récupère les informations de la location
+            $location=$user->locataire->location;
+            if (!$location) {
+                return response()->json([
+                    'message' => 'Aucune location trouvée.',
+                ], 404);
+            }    
+            // Reformater les données pour inclure uniquement les champs nécessaires
+            $formattedLocation = [
+                'id' => $location->id,
+                'date' => $location->date,
+                'description' => $location->description,
+                'loyer_montant' => $location->loyer_montant,
+                'devise' => $location->devise,
+                'confirm' => $location->confirm,
+                'propriete' => [
+                    'id' => $location->propriete->id ?? null,
+                    'adresse' => $location->propriete->adresse ?? 'N/A',
+                    'description' => $location->propriete->description ?? 'N/A',
+                ],
+                'locataire' => [
+                    'nom' => $location->locataire->utilisateur->nom ?? 'N/A',
+                    'tel' => $location->locataire->utilisateur->tel ?? 'N/A',
+                ],
+                'proprietaire' => [
+                    'nom' => $location->proprietaire->utilisateur->nom ?? 'N/A',
+                    'tel' => $location->proprietaire->utilisateur->tel ?? 'N/A',
+                ],
+                'created_at' => $location->created_at->format('d-m-Y'),
+            ];
+    
+            // Retourner la réponse JSON
+            return response()->json([
+                'message' => 'Détails de la location récupérés avec succès.',
+                'location' => $formattedLocation,
+            ], 200);
+
+        } catch (Exception $e) {
+            return response()->json([
+                'message' => 'Une erreur est survenue lors de la récupération des détails de la location.',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Location $location)
+    public function show($id)
     {
         //
+       
+        try {
+            $location = Location::findOrFail($id);
+            // Vérifier que l'utilisateur est connecté
+            $user = Auth::user();
+            if (!$user) {
+                return response()->json([
+                    'message' => 'Veuillez vous connecter !',
+                ], 403);
+            }
+            
+            // Vérifier si l'utilisateur est propriétaire ou locataire de la location
+            if (
+                (($user->role === 'proprietaire') && ($location->id_proprietaire !== $user->proprietaire->id)) ||
+                ($user->role === 'locataire' && $location->id_locataire !== $user->locataire->id)
+            ) {
+                return response()->json([
+                    'message' => 'Accès refusé : cette location ne vous est pas associée.',
+                ], 403);
+            }
+    
+            // Charger les relations nécessaires
+            $location->load(['locataire.utilisateur', 'propriete', 'proprietaire.utilisateur']);
+    
+            // Reformater les données pour inclure uniquement les champs nécessaires
+            $formattedLocation = [
+                'id' => $location->id,
+                'date' => $location->date,
+                'description' => $location->description,
+                'loyer_montant' => $location->loyer_montant,
+                'devise' => $location->devise,
+                'confirm' => $location->confirm,
+                'propriete' => [
+                    'id' => $location->propriete->id ?? null,
+                    'adresse' => $location->propriete->adresse ?? 'N/A',
+                    'description' => $location->propriete->description ?? 'N/A',
+                ],
+                'locataire' => [
+                    'nom' => $location->locataire->utilisateur->nom ?? 'N/A',
+                    'tel' => $location->locataire->utilisateur->tel ?? 'N/A',
+                ],
+                'proprietaire' => [
+                    'nom' => $location->proprietaire->utilisateur->nom ?? 'N/A',
+                    'tel' => $location->proprietaire->utilisateur->tel ?? 'N/A',
+                ],
+                'created_at' => $location->created_at->format('d-m-Y'),
+            ];
+    
+            // Retourner la réponse JSON
+            return response()->json([
+                'message' => 'Détails de la location récupérés avec succès.',
+                'location' => $formattedLocation,
+            ], 200);
+    
+        } catch (\Exception $e) {
+            // Gestion des erreurs (par exemple, location non trouvée)
+            return response()->json([
+                'message' => 'Une erreur est survenue lors de la récupération des détails de la location.',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
     }
 
     /**
@@ -141,6 +254,7 @@ class LocationController extends Controller
     public function edit(Location $location)
     {
         //
+        
     }
 
     /**
