@@ -16,7 +16,7 @@ class Locataire extends Model
         return $this->belongsTo(User::class, 'user_id');
     }
     public function location(){
-        return $this->hasOne(Location::class, 'id_location', 'id');
+        return $this->hasOne(Location::class, 'id_locataire', 'id');
     }
     public function proprietaire()
     {
