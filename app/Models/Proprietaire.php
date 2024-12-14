@@ -28,5 +28,8 @@ class Proprietaire extends Model
     {
         return $this->hasMany(Locataire::class, 'id_proprietaire', 'id');
     }
-
+    public function plaintes()
+    {
+        return $this->hasMany(Plainte::class, 'id_proprietaire', 'id');
+    }
 }

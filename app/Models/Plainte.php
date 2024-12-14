@@ -20,11 +20,11 @@ class Plainte extends Model
 
     public function locataire()
     {
-        return $this->belongsTo(Locataire::class, 'id_locataire');
+        return $this->belongsTo(Locataire::class, 'id_locataire', 'id');
     }
 
     public function proprietaire()
     {
-        return $this->belongsTo(Proprietaire::class, 'id_proprietaire');
+        return $this->belongsTo(Proprietaire::class, 'id_proprietaire', 'id');
     }
 }
