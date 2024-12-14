@@ -13,6 +13,9 @@ use Illuminate\Support\Facades\Auth;
 class payementController extends Controller
 {
     //
+    public function getPayements(){
+
+    }
     public function payement(PaiementRequest $request) {
         try {
             // Vérification : l'utilisateur doit être un locataire
