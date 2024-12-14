@@ -13,6 +13,41 @@ use Illuminate\Support\Facades\Auth;
 class PlainteController extends Controller
 {
     //
+    public function getPlaintes()
+    {
+        try {
+            // Vérifier que l'utilisateur est connecté et est un propriétaire
+            $user = Auth::user();
+            if (!$user || $user->role !== 'proprietaire') {
+                return response()->json([
+                    'message' => 'Accès refusé : seuls les propriétaires peuvent accéder aux plaintes.',
+                ], 403);
+            }
+
+            // Récupérer les plaintes associées au propriétaire
+            $plaintes = $user->proprietaire->plaintes;
+            //dd($plaintes);
+            $formattedPlaintes = $plaintes->map(function ($plainte) {
+                return [
+                    'id' => $plainte->id,
+                    'sujet' => $plainte->sujet,
+                    'description' => $plainte->description,
+                    'nom_locataire' => optional($plainte->locataire->utilisateur)->nom ?? 'N/A',
+                ];
+            })->toArray();
+            return response()->json([
+                'message' => 'Plaintes récupérées avec succès.',
+                'plaintes' => $formattedPlaintes,
+            ], 200);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Une erreur est survenue lors de la récupération des plaintes.',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
     public function store(StorePlainteRequest $request)
     {    
         try 
