@@ -19,6 +19,39 @@ class LocataireController extends Controller
     public function index()
     {
         //
+         try {
+            // Vérifier que l'utilisateur est connecté et est un propriétaire
+            $user = Auth::user();
+            if (!$user || $user->role !== 'proprietaire') {
+                return response()->json([
+                    'message' => 'Accès refusé : seuls les propriétaires peuvent accéder aux locataires.',
+                ], 403);
+            }
+
+            // Récupérer les locataires associés au propriétaire
+            $locataires = Locataire::where('id_proprietaire', $user->proprietaire->id)->get();
+            //dd($locataires);
+            $formattedlocataires=$locataires->map(function ($locataire){
+                return [
+                    'id' => $locataire->id,
+                    'nom' => $locataire->utilisateur->nom,
+                    'prenom' => $locataire->utilisateur->prenom,
+                    'tel' => $locataire->utilisateur->tel,
+                    'email' => $locataire->utilisateur->email,
+                ];
+            })->toArray();
+
+            return response()->json([
+                'message' => 'Locataires récupérés avec succès.',
+                'locataires' => $formattedlocataires,
+            ], 200);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Une erreur est survenue lors de la récupération des locataires.',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
     }
 
     /**
