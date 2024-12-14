@@ -30,6 +30,9 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::patch('user/payements/{paiement_id}/status', [PayementController::class, 'updateStatus']);
         Route::get('user/locations', [LocationController::class, 'index']);
         Route::get('user/locations/{location_id}', [LocationController::class, 'show']);
+        Route::get('user/plaintes/', [PlainteController::class, 'getPlaintes']);
+        Route::get('user/locataires', [LocataireController::class, 'index']);
+        Route::get('user/payements', [PayementController::class, 'getPaiements']);
 
         // Ajoutez ici d'autres routes spécifiques aux propriétaires
     });
