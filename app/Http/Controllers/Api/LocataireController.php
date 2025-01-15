@@ -3,13 +3,16 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\RegisterLocataire;
 use App\Http\Requests\RegisterUser;
 use App\Models\Locataire;
 use App\Models\User;
+use App\Notifications\LocataireCreatedNotification;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 class LocataireController extends Controller
 {
@@ -57,7 +60,7 @@ class LocataireController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create(RegisterUser $request)
+    public function create(RegisterLocataire $request)
     {
         //
         try {
@@ -68,6 +71,8 @@ class LocataireController extends Controller
                     'message' => 'Accès refusé. Seuls les propriétaires peuvent créer des locataires.',
                 ], 403);
             }
+            // Génération d'un mot de passe aléatoire
+            $password = Str::random(8);
             // Création de l'utilisateur locataire 
             $user = User::create([
                 'nom' => $request->nom,
@@ -75,12 +80,14 @@ class LocataireController extends Controller
                 'tel' => $request->tel,
                 'role' => 'locataire',
                 'email' => $request->email,
-                'password' => Hash::make($request->password, ['round'=>12])
+                'password' => Hash::make($password), // Le mot de passe est hashé pour la base de données
             ]);
             Locataire::create([
             'user_id' => $user->id, // liaison avec l'utilisateur
             'id_proprietaire'=> $userProprio->proprietaire->id,
             ]);
+
+            $user->notify(new LocataireCreatedNotification($user->email, $password, $userProprio));
         // Retourner une réponse JSON avec les détails de l'utilisateur créé
             return response()->json([
             'message' => 'Utilisateur enregistré avec succès',
